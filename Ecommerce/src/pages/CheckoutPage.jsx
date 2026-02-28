@@ -6,18 +6,36 @@ import "./CheckoutPage.css"
 import { formatMoney } from "../utils/money";
 
 export function CheckoutPage({ cart }) {
+
+
+ 
+
+
+
   const [deliveryOptions, setDeliveryOptions] = useState([])
+  const [paymentSummary, setPaymentSummary] = useState({
+    totalItems: 3,
+    productCostCents: 4275,
+    shippingCostCents: 499,
+    totalCostBeforeTaxCents: 4774,
+    taxCents: 477,
+    totalCostCents: 5251
+});
 
   useEffect(() => {
+   
     axios.get("/api/delivery-options?expand=estimatedDeliveryTime")
       .then((response) => {
         setDeliveryOptions(response.data)
       })
+    axios.get("/api/payment-summary")
+      .then((response) => {
+        setPaymentSummary(response.data)
+         
+      })
   }, [])
 
-  //  console.log(cart)
-  console.log(deliveryOptions)
-
+   
   return (
     <>
       <div className="checkout-header">
@@ -93,18 +111,18 @@ export function CheckoutPage({ cart }) {
                         </div>
                         {
                           deliveryOptions.map((elem) => {
-                             let priceString ='FREE Shipping'
+                            let priceString = 'FREE Shipping'
 
-                             if(elem.priceCents > 0) {
+                            if (elem.priceCents > 0) {
                               priceString = `${formatMoney(elem.priceCents)} - Shipping`;
-                             }
+                            }
 
 
 
                             return (
                               <div key={elem.id} className="delivery-option">
                                 <input type="radio"
-                                 checked ={elem.id === cartItem.deliveryOptionId}
+                                  checked={elem.id === cartItem.deliveryOptionId}
 
 
                                   className="delivery-option-input"
@@ -112,8 +130,8 @@ export function CheckoutPage({ cart }) {
                                 <div>
                                   <div className="delivery-option-date">
                                     {
-                                    dayjs(elem.estimatedDeliveryTimeMs)
-                                    .format("dddd, MMMM, D")
+                                      dayjs(elem.estimatedDeliveryTimeMs)
+                                        .format("dddd, MMMM, D")
                                     }
                                   </div>
                                   <div className="delivery-option-price">
@@ -139,33 +157,36 @@ export function CheckoutPage({ cart }) {
             </div>
 
             <div className="payment-summary-row">
-              <div>Items (3):</div>
-              <div className="payment-summary-money">$42.75</div>
+              <div>Items {paymentSummary.totalItems != null && paymentSummary.totalItems}:</div>
+              <div className="payment-summary-money">{formatMoney(paymentSummary.productCostSents || 0)}</div>
             </div>
 
             <div className="payment-summary-row">
               <div>Shipping &amp; handling:</div>
-              <div className="payment-summary-money">$4.99</div>
+              <div className="payment-summary-money">{formatMoney(paymentSummary.shippingCostCents || 0)}</div>
             </div>
 
             <div className="payment-summary-row subtotal-row">
               <div>Total before tax:</div>
-              <div className="payment-summary-money">$47.74</div>
+              <div className="payment-summary-money">{formatMoney(paymentSummary.totalCostBeforeTaxCents || 0)}</div>
             </div>
+            {paymentSummary && (
+              <>
+                <div className="payment-summary-row">
+                  <div>Estimated tax (10%):</div>
+                  <div className="payment-summary-money">{formatMoney(paymentSummary.textCents || 0)}</div>
+                </div>
 
-            <div className="payment-summary-row">
-              <div>Estimated tax (10%):</div>
-              <div className="payment-summary-money">$4.77</div>
-            </div>
+                <div className="payment-summary-row total-row">
+                  <div>Order total:</div>
+                  <div className="payment-summary-money">{formatMoney(paymentSummary.totalCostCents || 0)}</div>
+                </div>
 
-            <div className="payment-summary-row total-row">
-              <div>Order total:</div>
-              <div className="payment-summary-money">$52.51</div>
-            </div>
-
-            <button className="place-order-button button-primary">
-              Place your order
-            </button>
+                <button className="place-order-button button-primary">
+                  Place your order
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
