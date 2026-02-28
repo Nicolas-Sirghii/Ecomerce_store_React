@@ -14,12 +14,12 @@ export function CheckoutPage({ cart }) {
 
   const [deliveryOptions, setDeliveryOptions] = useState([])
   const [paymentSummary, setPaymentSummary] = useState({
-    totalItems: 3,
-    productCostCents: 4275,
-    shippingCostCents: 499,
-    totalCostBeforeTaxCents: 4774,
-    taxCents: 477,
-    totalCostCents: 5251
+    totalItems: 0,
+    productCostCents: 0,
+    shippingCostCents: 0,
+    totalCostBeforeTaxCents: 0,
+    taxCents: 0,
+    totalCostCents: 0
 });
 
   useEffect(() => {
