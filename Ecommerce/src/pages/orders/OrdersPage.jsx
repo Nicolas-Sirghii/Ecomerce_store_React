@@ -2,10 +2,10 @@ import "./OrdersPage.css"
 import axios from "axios";
 import dayjs from "dayjs";
 import { useState, useEffect, Fragment } from "react";
-import { formatMoney } from "../utils/money";
+import { formatMoney } from "../../utils/money";
 
 
-export function OrdersPage({ cart }) {
+export function OrdersPage() {
   const [orders, setOrders] = useState([])
 
   useEffect(() => {
